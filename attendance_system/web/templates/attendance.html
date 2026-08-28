@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-head">
+  <div>
+    <p class="eyebrow">Classroom</p>
+    <h1>Take attendance</h1>
+    <p class="sub">Upload a classroom photo — every recognized face is marked present instantly.</p>
+  </div>
+</header>
+
+<div class="two-col">
+  <section class="card">
+    <div class="card-head">
+      <h2>Upload photo</h2>
+    </div>
+    <label class="dropzone" for="att-file" id="att-dropzone">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <strong id="att-drop-title">Choose a classroom photo</strong>
+      <small id="att-drop-hint">JPG or PNG · group photos are supported</small>
+      <input id="att-file" type="file" accept="image/jpeg,image/png" hidden>
+    </label>
+    <ul class="file-list hidden" id="att-file-list"></ul>
+    <div class="card-actions">
+      <button class="btn btn-primary" id="btn-attend-upload" type="button" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="4"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg>
+        Process photo
+      </button>
+    </div>
+  </section>
+
+  <section class="card" id="result-card">
+    <div class="card-head">
+      <h2>Recognition results</h2>
+      <button class="btn btn-ghost btn-sm hidden" id="btn-new-scan" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        New scan
+      </button>
+    </div>
+
+    <div class="empty-state" id="result-empty">
+      <span class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </span>
+      <strong>No scan yet</strong>
+      <p>Upload a photo to see recognized faces here.</p>
+    </div>
+
+    <div class="hidden" id="result-content">
+      <div class="result-stats">
+        <div class="result-stat"><strong id="res-faces">0</strong><span>Faces found</span></div>
+        <div class="result-stat good"><strong id="res-recognized">0</strong><span>Recognized</span></div>
+        <div class="result-stat warn"><strong id="res-unknown">0</strong><span>Unknown</span></div>
+      </div>
+      <figure class="result-image">
+        <img id="result-img" alt="Processed classroom photo with face boxes">
+      </figure>
+      <div id="recognized-list"></div>
+      <p class="note hidden" id="unknown-note">
+        Unknown faces were saved for review. If a registered student wasn't recognized, try better lighting or a closer shot.
+      </p>
+    </div>
+
+    <div class="scanning hidden" id="result-scanning">
+      <span class="spinner big"></span>
+      <strong>Processing faces…</strong>
+      <p>This can take a moment on group photos.</p>
+    </div>
+  </section>
+</div>
+
+<section class="card">
+  <div class="card-head">
+    <h2>Today's attendance log</h2>
+    <span class="chip chip-green" id="log-count">0 present</span>
+  </div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>Student</th><th>ID</th><th>Time</th><th>Status</th></tr>
+      </thead>
+      <tbody id="log-body">
+        <tr><td colspan="4" class="loading-row">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/attendance.js') }}"></script>
+{% endblock %}

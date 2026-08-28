@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-head">
+  <div>
+    <p class="eyebrow">Analytics</p>
+    <h1>Attendance reports</h1>
+    <p class="sub">Browse any day's attendance and export it as a CSV sheet.</p>
+  </div>
+</header>
+
+<section class="card">
+  <div class="reports-bar">
+    <div class="field">
+      <label for="report-date">Select date</label>
+      <input type="date" id="report-date">
+    </div>
+    <div class="reports-actions">
+      <button class="btn btn-ghost" id="btn-refresh" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Refresh
+      </button>
+      <a class="btn btn-primary" id="btn-download" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download CSV
+      </a>
+    </div>
+  </div>
+
+  <div class="result-stats" id="report-summary">
+    <div class="result-stat good"><strong id="rep-present">0</strong><span>Students present</span></div>
+    <div class="result-stat"><strong id="rep-rows">0</strong><span>Records</span></div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>#</th><th>Student</th><th>ID</th><th>Date</th><th>Time</th><th>Status</th></tr>
+      </thead>
+      <tbody id="report-body">
+        <tr><td colspan="6" class="loading-row">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="empty-state hidden" id="report-empty">
+    <span class="empty-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </span>
+    <strong>No records for this date</strong>
+    <p>Try another day, or take attendance first.</p>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+{% endblock %}

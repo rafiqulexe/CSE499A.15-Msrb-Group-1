@@ -1,0 +1,44 @@
+attendance_system/
+│
+├── main.py                          # Entry point
+├── requirements.txt                 # Dependencies
+├── README.md                        # Project overview
+├── config.py                        # Settings & thresholds
+│
+├── database/                        # WEEK 1
+│   ├── __init__.py
+│   ├── db_manager.py                # W1-T3, W1-T4: SQLite schema
+│   └── attendance.db                # Auto-created database
+│
+├── utils/                           # Core Logic (Weeks 1-3)
+│   ├── __init__.py
+│   ├── registration.py              # W1-T5 to W1-T8: Enrollment
+│   ├── detection.py                 # W2-T1, W2-T2: Face detection
+│   ├── recognition.py               # W2-T3 to W2-T7: Face matching
+│   ├── attendance.py                # W3-T1 to W3-T7: Mark attendance
+│   └── image_processing.py          # Preprocessing utilities
+│
+├── models/
+│   ├── __init__.py
+│   └── face_model.py                # face_recognition wrapper
+│
+├── assets/
+│   ├── sample_classroom.jpg
+│   └── logo.png
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_week3.py
+│   ├── test_week5.py
+│   ├── test_auth.py
+│   └── test_logic_non_interactive.py
+│
+├── data/
+│   ├── enrolled_students/
+│   ├── attendance_logs/
+│   └── unknown_faces/               # Paper 5: manual review
+│
+└── docs/                            # WEEK 5
+    ├── user_manual.md
+    ├── installation_guide.md
+    └── troubleshooting.md

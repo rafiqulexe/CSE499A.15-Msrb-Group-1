@@ -1,0 +1,65 @@
+﻿# =========================================
+# Byte-compiled / optimized / DLL files
+# =========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# =========================================
+# Virtual Environments
+# =========================================
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# =========================================
+# SQLite Databases & Migration Backups
+# =========================================
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.backup*
+attendance.db*
+
+# =========================================
+# Sensitive Biometric Data & Secret Keys
+# =========================================
+attendance_system/data/unknown_faces/*
+attendance_system/data/enrolled_students/*
+attendance_system/data/attendance_logs/*
+attendance_system/data/secret_key
+!attendance_system/data/unknown_faces/.gitkeep
+!attendance_system/data/enrolled_students/.gitkeep
+!attendance_system/data/attendance_logs/.gitkeep
+!attendance_system/database/.gitkeep
+
+data/unknown_faces/*
+data/enrolled_students/*
+data/attendance_logs/*
+data/secret_key
+!data/unknown_faces/.gitkeep
+!data/enrolled_students/.gitkeep
+!data/attendance_logs/.gitkeep
+!data/database/.gitkeep
+
+# =========================================
+# Log files & Server Artifacts
+# =========================================
+*.log
+server.log
+temp_embedding.jpg
+
+# =========================================
+# IDEs and OS Metadata
+# =========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
