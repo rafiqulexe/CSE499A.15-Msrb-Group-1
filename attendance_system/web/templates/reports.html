@@ -1,54 +1,105 @@
 {% extends "base.html" %}
+{% block title %}Reports{% endblock %}
 
 {% block content %}
 <header class="page-head">
   <div>
-    <p class="eyebrow">Analytics</p>
+    <p class="eyebrow">Records</p>
     <h1>Attendance reports</h1>
-    <p class="sub">Browse any day's attendance and export it as a CSV sheet.</p>
+    <p class="sub">Any day's register, sortable and exportable as CSV.</p>
   </div>
 </header>
 
-<section class="card">
-  <div class="reports-bar">
-    <div class="field">
-      <label for="report-date">Select date</label>
-      <input type="date" id="report-date">
-    </div>
-    <div class="reports-actions">
-      <button class="btn btn-ghost" id="btn-refresh" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        Refresh
-      </button>
-      <a class="btn btn-primary" id="btn-download" href="#">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download CSV
-      </a>
+<section class="panel panel-quiet">
+  <div class="panel-body">
+    <div class="report-bar">
+      <div class="date-nav">
+        <button class="btn btn-ghost" id="btn-prev-day" type="button" aria-label="Previous day">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="field">
+          <label for="report-date">Date</label>
+          <input type="date" id="report-date">
+        </div>
+        <button class="btn btn-ghost" id="btn-next-day" type="button" aria-label="Next day">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div class="date-quick">
+          <button class="btn btn-ghost btn-sm" data-quick="0" type="button">Today</button>
+          <button class="btn btn-ghost btn-sm" data-quick="1" type="button">Yesterday</button>
+        </div>
+      </div>
+
+      <div class="report-actions">
+        <button class="btn btn-ghost" id="btn-refresh" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="21 4 21 10 15 10"/><path d="M20.5 14a8.5 8.5 0 1 1-2-8.9L21 7"/>
+          </svg>
+          Refresh
+        </button>
+        <a class="btn btn-primary" id="btn-download" href="#" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7.5 10 12 14.5 16.5 10"/><line x1="12" y1="14.5" x2="12" y2="3"/>
+          </svg>
+          Export CSV
+        </a>
+      </div>
     </div>
   </div>
+</section>
 
-  <div class="result-stats" id="report-summary">
-    <div class="result-stat good"><strong id="rep-present">0</strong><span>Students present</span></div>
-    <div class="result-stat"><strong id="rep-rows">0</strong><span>Records</span></div>
+<section class="panel" aria-labelledby="records-heading">
+  <div class="panel-head">
+    <h2 id="records-heading">Register</h2>
+    <div class="panel-head-actions">
+      <span class="chip chip-present" id="rep-present">0 present</span>
+      <span class="chip chip-plain" id="rep-rows">0 records</span>
+    </div>
   </div>
 
   <div class="table-wrap">
-    <table class="table">
+    <table class="table report-table">
+      <caption class="sr-only">Attendance records for the selected date</caption>
       <thead>
-        <tr><th>#</th><th>Student</th><th>ID</th><th>Date</th><th>Time</th><th>Status</th></tr>
+        <tr>
+          <th scope="col" class="shrink">#</th>
+          <th scope="col" data-sort="name">
+            <button type="button">Student
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg>
+            </button>
+          </th>
+          <th scope="col" data-sort="student_id">
+            <button type="button">ID
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg>
+            </button>
+          </th>
+          <th scope="col" data-sort="timestamp">
+            <button type="button">Time
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg>
+            </button>
+          </th>
+          <th scope="col">Status</th>
+        </tr>
       </thead>
       <tbody id="report-body">
-        <tr><td colspan="6" class="loading-row">Loading…</td></tr>
+        <tr><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td></tr>
+        <tr><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td></tr>
+        <tr><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td></tr>
       </tbody>
     </table>
   </div>
 
-  <div class="empty-state hidden" id="report-empty">
+  <!-- Below 640px the same records render as cards instead of a wide table. -->
+  <div class="record-cards" id="record-cards"></div>
+
+  <div class="empty hidden" id="report-empty">
     <span class="empty-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="17" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
     </span>
     <strong>No records for this date</strong>
-    <p>Try another day, or take attendance first.</p>
+    <p>Nothing was recorded on the selected day. Try another date, or take attendance first.</p>
   </div>
 </section>
 {% endblock %}

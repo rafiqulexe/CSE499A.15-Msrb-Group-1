@@ -1,58 +1,47 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Create account · CampusEye</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body class="auth-body">
-  <div class="auth-wrap">
-    <div class="auth-card">
-      <a class="brand" href="/login">
-        <span class="brand-mark">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5v6"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>
-        </span>
-        <span class="brand-text">
-          <strong>CampusEye</strong>
-          <small>Sophisticated Campus Monitoring</small>
-        </span>
-      </a>
+{% extends "auth_base.html" %}
+{% block title %}Create account{% endblock %}
 
-      <div class="auth-head">
-        <h1>Create your workspace ✨</h1>
-        <p>Each account keeps its own students and attendance records.</p>
-      </div>
+{% block form %}
+<div class="auth-head">
+  <h1>Create workspace</h1>
+  <p>Each account keeps its own students and attendance records.</p>
+</div>
 
-      {% if error %}<div class="auth-error">{{ error }}</div>{% endif %}
+{% if error %}
+<div class="auth-error" role="alert">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16.5" x2="12.01" y2="16.5"/>
+  </svg>
+  <span>{{ error }}</span>
+</div>
+{% endif %}
 
-      <form method="post" action="/signup" class="auth-form">
-        <div class="field">
-          <label for="display_name">Full name <span class="optional">(optional)</span></label>
-          <input id="display_name" name="display_name" value="{{ display_name or '' }}" autocomplete="name" placeholder="e.g. Rizvi Ahmed">
-        </div>
-        <div class="field">
-          <label for="username">Username</label>
-          <input id="username" name="username" value="{{ username or '' }}" autocomplete="username" minlength="3" required placeholder="At least 3 characters">
-        </div>
-        <div class="field">
-          <label for="password">Password</label>
-          <input id="password" name="password" type="password" autocomplete="new-password" minlength="6" required placeholder="At least 6 characters">
-        </div>
-        <button type="submit" class="btn btn-primary auth-submit">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-          Create account
-        </button>
-      </form>
-
-      <p class="auth-alt">Already registered? <a href="/login">Sign in</a></p>
-    </div>
-
-    <p class="auth-foot">CSE499.15 · Group 7</p>
+<form method="post" action="/signup" class="auth-form">
+  <div class="field">
+    <label for="display_name">Full name <span class="optional">— optional</span></label>
+    <input id="display_name" name="display_name" value="{{ display_name or '' }}"
+           autocomplete="name">
   </div>
-</body>
-</html>
+
+  <div class="field">
+    <label for="username">Username</label>
+    <input id="username" name="username" value="{{ username or '' }}"
+           autocomplete="username" minlength="3" required
+           aria-describedby="username-hint"
+           {% if error %}aria-invalid="true"{% endif %}>
+    <p class="field-hint" id="username-hint">At least 3 characters.</p>
+  </div>
+
+  <div class="field">
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password"
+           autocomplete="new-password" minlength="6" required
+           aria-describedby="password-hint">
+    <p class="field-hint" id="password-hint">At least 6 characters.</p>
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-lg btn-block">Create account</button>
+</form>
+
+<p class="auth-alt">Already registered? <a href="/login">Sign in</a></p>
+{% endblock %}

@@ -3,134 +3,115 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>{% block title %}Dashboard{% endblock %} · CampusEye</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta name="theme-color" content="#0A0B0D">
+  <meta name="color-scheme" content="dark">
+  <title>{% block title %}Overview{% endblock %} · CampusEye</title>
+  {% include "_head.html" %}
 </head>
 <body>
 
-  <!-- Mobile top bar (visible only on mobile) -->
-  <div class="mobile-topbar" id="mobile-topbar">
-    <div class="mobile-brand">
-      <span class="brand-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5v6"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>
-      </span>
-      <strong>CampusEye</strong>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Mobile chrome ------------------------------------------------------ -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      {% include "_mark.html" %}
+      <span class="wordmark">Campus<span>Eye</span></span>
     </div>
-    <button class="hamburger" id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
-      <svg id="ham-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="3" y1="6" x2="21" y2="6"/>
-        <line x1="3" y1="12" x2="21" y2="12"/>
-        <line x1="3" y1="18" x2="21" y2="18"/>
+    <button class="icon-btn" id="drawer-toggle" type="button"
+            aria-label="Open navigation" aria-expanded="false" aria-controls="rail">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
       </svg>
     </button>
-  </div>
+  </header>
+  <div class="scrim" id="scrim" hidden></div>
 
-  <!-- Overlay (click to close drawer) -->
-  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <div class="shell">
 
-  <div class="layout">
-    <aside class="sidebar" id="sidebar">
-      <a class="brand" href="/">
-        <span class="brand-mark">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5v6"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>
-        </span>
-        <span class="brand-text">
-          <strong>CampusEye</strong>
-          <small>Sophisticated Campus Monitoring</small>
-        </span>
-      </a>
+    <!-- Navigation rail -------------------------------------------------- -->
+    <aside class="rail" id="rail">
+      <div class="rail-head">
+        {% include "_mark.html" %}
+        <span class="wordmark">Campus<span>Eye</span></span>
+      </div>
 
-      <nav class="nav">
-        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
-          <span>Dashboard</span>
+      <nav class="rail-nav" aria-label="Primary">
+        <p class="nav-label" id="nav-monitor">Monitor</p>
+        <a class="nav-item" href="/"
+           {% if request.path == '/' %}aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="8" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/>
+            <rect x="14" y="11" width="7" height="10" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>
+          </svg>
+          <span>Overview</span>
         </a>
-        <a class="nav-link {% if request.path.startswith('/register') %}active{% endif %}" href="/register">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-          <span>Register Student</span>
+        <a class="nav-item" href="/attendance"
+           {% if request.path.startswith('/attendance') %}aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
+            <circle cx="12" cy="12" r="3.25"/>
+          </svg>
+          <span>Take attendance</span>
         </a>
-        <a class="nav-link {% if request.path.startswith('/attendance') %}active{% endif %}" href="/attendance">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          <span>Take Attendance</span>
+
+        <p class="nav-label">Manage</p>
+        <a class="nav-item" href="/register"
+           {% if request.path.startswith('/register') %}aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-4A3.5 3.5 0 0 0 4 18.5V20"/>
+            <circle cx="9.5" cy="8" r="3.5"/><line x1="18" y1="8" x2="18" y2="14"/><line x1="21" y1="11" x2="15" y2="11"/>
+          </svg>
+          <span>Enrol student</span>
         </a>
-        <a class="nav-link {% if request.path.startswith('/reports') %}active{% endif %}" href="/reports">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6" rx="1"/><rect x="12" y="8" width="3" height="10" rx="1"/><rect x="17" y="5" width="3" height="13" rx="1"/></svg>
+        <a class="nav-item" href="/reports"
+           {% if request.path.startswith('/reports') %}aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 3v16.5A1.5 1.5 0 0 0 4.5 21H21"/>
+            <rect x="7" y="12" width="3" height="5" rx="1"/><rect x="12" y="8" width="3" height="9" rx="1"/><rect x="17" y="5" width="3" height="12" rx="1"/>
+          </svg>
           <span>Reports</span>
         </a>
       </nav>
 
-      <div class="sidebar-foot">
+      <div class="rail-foot">
         {% if current_user %}
-        <div class="user-card">
-          <span class="user-avatar">{{ (current_user.display_name or current_user.username or '?')[:1]|upper }}</span>
-          <div class="user-meta">
+        <div class="account">
+          <span class="avatar" aria-hidden="true">{{ (current_user.display_name or current_user.username or '?')[:1]|upper }}</span>
+          <span class="account-meta">
             <strong>{{ current_user.display_name or current_user.username }}</strong>
-            <small>@{{ current_user.username }}</small>
-          </div>
-          <form method="post" action="/logout" title="Sign out">
-            <button type="submit" class="logout-btn" aria-label="Sign out">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <small>{{ current_user.username }}</small>
+          </span>
+          <form method="post" action="/logout">
+            <button type="submit" class="icon-btn" aria-label="Sign out">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
             </button>
           </form>
         </div>
         {% endif %}
-        <div class="foot-card">
-          <span class="foot-dot"></span>
-          <div>
-            <strong>System online</strong>
-            <small>CSE499.15 · Group 7</small>
-          </div>
-        </div>
+        <p class="health">
+          <span class="dot" aria-hidden="true"></span>
+          <span>Operational</span>
+          <span class="sep" aria-hidden="true">/</span>
+          <span>CSE499.15</span>
+        </p>
       </div>
     </aside>
 
-    <main class="main">
-      {% block content %}{% endblock %}
+    <!-- Content ---------------------------------------------------------- -->
+    <main class="main" id="main" tabindex="-1">
+      <div class="main-inner">
+        {% block content %}{% endblock %}
+      </div>
     </main>
   </div>
 
-  <div class="toasts" id="toasts"></div>
+  <!-- Toast region. aria-live so errors are announced, not just drawn. -->
+  <div class="toasts" id="toasts" role="status" aria-live="polite" aria-atomic="false"></div>
+
   <script src="{{ url_for('static', filename='js/common.js') }}"></script>
-  <script>
-    // Hamburger drawer logic
-    const sidebar  = document.getElementById('sidebar');
-    const overlay  = document.getElementById('drawer-overlay');
-    const hamburger = document.getElementById('hamburger-btn');
-
-    function openDrawer() {
-      sidebar.classList.add('open');
-      overlay.classList.add('open');
-      hamburger.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeDrawer() {
-      sidebar.classList.remove('open');
-      overlay.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-    }
-
-    hamburger.addEventListener('click', () => {
-      sidebar.classList.contains('open') ? closeDrawer() : openDrawer();
-    });
-    overlay.addEventListener('click', closeDrawer);
-
-    // Close drawer on nav link click (mobile)
-    document.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 768) closeDrawer();
-      });
-    });
-
-    // Close on Escape
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeDrawer();
-    });
-  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

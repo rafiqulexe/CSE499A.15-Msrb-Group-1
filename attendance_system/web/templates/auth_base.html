@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0B0D">
+  <meta name="color-scheme" content="dark">
+  <title>{% block title %}Sign in{% endblock %} · CampusEye</title>
+  {% include "_head.html" %}
+</head>
+<body>
+  <div class="auth">
+
+    <!-- Context panel: what the system is, stated plainly. -->
+    <aside class="auth-aside">
+      <div class="cluster">
+        {% include "_mark.html" %}
+        <span class="wordmark">Campus<span>Eye</span></span>
+      </div>
+
+      <div class="auth-pitch">
+        <h2>Attendance, measured from a single frame.</h2>
+        <p>
+          Enrol a student once. From then on, one classroom photograph resolves
+          every registered face and writes the register for you.
+        </p>
+
+        <dl class="auth-specs">
+          <div class="auth-spec"><dt class="k">Recognition</dt><dd>DeepFace · Facenet embeddings</dd></div>
+          <div class="auth-spec"><dt class="k">Detection</dt><dd>Multi-face, single exposure</dd></div>
+          <div class="auth-spec"><dt class="k">Export</dt><dd>Per-day CSV register</dd></div>
+          <div class="auth-spec"><dt class="k">Isolation</dt><dd>Records scoped per account</dd></div>
+        </dl>
+      </div>
+
+      <p class="auth-foot">CSE499.15 &nbsp;/&nbsp; Group 7</p>
+    </aside>
+
+    <!-- Form -->
+    <main class="auth-main">
+      <div class="auth-card">
+        {% block form %}{% endblock %}
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,106 +1,143 @@
 {% extends "base.html" %}
+{% block title %}Overview{% endblock %}
 
 {% block content %}
 <header class="page-head">
   <div>
-    <p class="eyebrow">Dashboard</p>
-    <h1>Classroom overview</h1>
-    <p class="sub" id="dash-date">Today</p>
+    <p class="eyebrow">Overview</p>
+    <h1>Today's register</h1>
+  </div>
+  <div class="page-head-actions">
+    <button class="btn btn-ghost" id="btn-reload" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="21 4 21 10 15 10"/><path d="M20.5 14a8.5 8.5 0 1 1-2-8.9L21 7"/>
+      </svg>
+      Refresh
+    </button>
   </div>
 </header>
 
-<section class="hero">
-  <div class="hero-text">
-    <span class="hero-badge">⚡ DeepFace · Facenet</span>
-    <h2>Attendance that takes<br>a single photo.</h2>
-    <p>Register students once, then mark an entire classroom present from one snapshot — with instant reports.</p>
-    <div class="hero-actions">
-      <a class="btn btn-light" href="/register">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-        Register a student
-      </a>
-      <a class="btn btn-outline-light" href="/attendance">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Take attendance
-      </a>
+<!-- Live status ribbon ---------------------------------------------------- -->
+<section class="ribbon" aria-labelledby="ribbon-heading">
+  <h2 class="sr-only" id="ribbon-heading">Current status</h2>
+
+  <div class="ribbon-meta">
+    <p class="ribbon-date">
+      <span id="dash-date">—</span>
+      <span class="sep" aria-hidden="true">/</span>
+      <span class="live"><span class="dot" aria-hidden="true"></span>Live</span>
+    </p>
+
+    <div class="figures">
+      <div class="figure figure-present">
+        <span class="value" id="stat-present">—</span>
+        <span class="label">Present</span>
+      </div>
+      <span class="figure-divider" aria-hidden="true"></span>
+      <div class="figure">
+        <span class="value" id="stat-students">—</span>
+        <span class="label">Enrolled</span>
+      </div>
+      <span class="figure-divider" aria-hidden="true"></span>
+      <div class="figure">
+        <span class="value" id="stat-rate">—</span>
+        <span class="label">Coverage</span>
+      </div>
+    </div>
+
+    <div class="coverage">
+      <div class="coverage-track">
+        <div class="coverage-fill" id="coverage-fill"
+             role="progressbar" aria-valuemin="0" aria-valuemax="100"
+             aria-valuenow="0" aria-label="Share of enrolled students marked present"></div>
+      </div>
+      <p class="coverage-legend">
+        <span id="coverage-text">—</span>
+        <span id="coverage-remaining">—</span>
+      </p>
     </div>
   </div>
-  <ol class="hero-steps">
-    <li><span>1</span><div><strong>Enroll faces</strong><small>Capture 10 samples per student</small></div></li>
-    <li><span>2</span><div><strong>Photograph the class</strong><small>One shot recognizes everyone</small></div></li>
-    <li><span>3</span><div><strong>Export reports</strong><small>Daily CSV attendance sheets</small></div></li>
-  </ol>
+
+  <div class="ribbon-action">
+    <a class="btn btn-primary btn-lg" href="/attendance">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
+        <circle cx="12" cy="12" r="3.25"/>
+      </svg>
+      Take attendance
+    </a>
+    <p class="text-3 mono" id="last-scan">No scan yet today</p>
+  </div>
 </section>
 
-<div class="stat-grid">
-  <div class="card stat">
-    <span class="stat-icon tint-indigo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-    </span>
-    <div>
-      <h3 id="stat-students">—</h3>
-      <p>Registered students</p>
-    </div>
-  </div>
-  <div class="card stat">
-    <span class="stat-icon tint-green">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-    </span>
-    <div>
-      <h3 id="stat-present">—</h3>
-      <p>Present today</p>
-    </div>
-  </div>
-  <div class="card stat">
-    <span class="stat-icon tint-violet">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-    </span>
-    <div>
-      <h3 id="stat-rate">—</h3>
-      <p>Attendance rate</p>
-    </div>
-  </div>
-</div>
+<div class="row row-main-aside">
 
-<div class="grid-2">
-  <section class="card">
-    <div class="card-head">
-      <h2>Recent activity</h2>
-      <span class="chip chip-plain">Today</span>
+  <!-- Activity -------------------------------------------------------- -->
+  <section class="panel" aria-labelledby="activity-heading">
+    <div class="panel-head">
+      <h2 id="activity-heading">Recent activity</h2>
+      <span class="chip chip-plain" id="activity-count">Today</span>
     </div>
-    <ul class="activity" id="recent-list">
-      <li class="loading-row">Loading…</li>
+    <ul class="feed" id="recent-list">
+      <li class="skel-row"><span class="skel skel-circle"></span><span class="skel skel-line" style="flex:1;max-width:180px"></span><span class="skel skel-line" style="width:44px"></span></li>
+      <li class="skel-row"><span class="skel skel-circle"></span><span class="skel skel-line" style="flex:1;max-width:140px"></span><span class="skel skel-line" style="width:44px"></span></li>
+      <li class="skel-row"><span class="skel skel-circle"></span><span class="skel skel-line" style="flex:1;max-width:200px"></span><span class="skel skel-line" style="width:44px"></span></li>
+      <li class="skel-row"><span class="skel skel-circle"></span><span class="skel skel-line" style="flex:1;max-width:160px"></span><span class="skel skel-line" style="width:44px"></span></li>
     </ul>
   </section>
 
-  <section class="card">
-    <div class="card-head">
-      <h2>Quick actions</h2>
-    </div>
-    <div class="quick">
-      <a href="/register">
-        <span class="quick-icon tint-indigo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-        </span>
-        <div><strong>Register a student</strong><small>Enroll new faces in the system</small></div>
-        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-      <a href="/attendance">
-        <span class="quick-icon tint-green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        </span>
-        <div><strong>Take attendance</strong><small>Capture or upload a classroom photo</small></div>
-        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-      <a href="/reports">
-        <span class="quick-icon tint-violet">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6" rx="1"/><rect x="12" y="8" width="3" height="10" rx="1"/><rect x="17" y="5" width="3" height="13" rx="1"/></svg>
-        </span>
-        <div><strong>View reports</strong><small>Browse and export attendance by date</small></div>
-        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-    </div>
-  </section>
+  <div class="stack">
+    <!-- 14-day trend ------------------------------------------------- -->
+    <section class="panel" aria-labelledby="trend-heading">
+      <div class="panel-head">
+        <h2 id="trend-heading">Last 14 days</h2>
+        <span class="chip chip-plain" id="trend-peak">—</span>
+      </div>
+      <div class="panel-body">
+        <div class="trend">
+          <div class="trend-chart" id="trend-chart" role="img"
+               aria-label="Students present on each of the last fourteen days"></div>
+          <p class="trend-axis">
+            <span id="trend-start">—</span>
+            <span id="trend-end">Today</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions ------------------------------------------------------ -->
+    <section class="panel" aria-labelledby="actions-heading">
+      <div class="panel-head">
+        <h2 id="actions-heading">Actions</h2>
+      </div>
+      <div class="actions">
+        <a href="/register">
+          <span class="action-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-4A3.5 3.5 0 0 0 4 18.5V20"/><circle cx="9.5" cy="8" r="3.5"/><line x1="18" y1="8" x2="18" y2="14"/><line x1="21" y1="11" x2="15" y2="11"/>
+            </svg>
+          </span>
+          <span class="action-text">
+            <strong>Enrol a student</strong>
+            <small>Capture face samples and build a profile</small>
+          </span>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="/reports">
+          <span class="action-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 3v16.5A1.5 1.5 0 0 0 4.5 21H21"/><rect x="7" y="12" width="3" height="5" rx="1"/><rect x="12" y="8" width="3" height="9" rx="1"/><rect x="17" y="5" width="3" height="12" rx="1"/>
+            </svg>
+          </span>
+          <span class="action-text">
+            <strong>Browse reports</strong>
+            <small>Any date, exportable as CSV</small>
+          </span>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </section>
+  </div>
 </div>
 {% endblock %}
 

@@ -1,86 +1,126 @@
 {% extends "base.html" %}
+{% block title %}Take attendance{% endblock %}
 
 {% block content %}
 <header class="page-head">
   <div>
     <p class="eyebrow">Classroom</p>
     <h1>Take attendance</h1>
-    <p class="sub">Upload a classroom photo — every recognized face is marked present instantly.</p>
+    <p class="sub">One photograph of the room. Every registered face it resolves is marked present.</p>
+  </div>
+  <div class="page-head-actions">
+    <button class="btn btn-ghost hidden" id="btn-new-scan" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="21 4 21 10 15 10"/><path d="M20.5 14a8.5 8.5 0 1 1-2-8.9L21 7"/>
+      </svg>
+      New scan
+    </button>
   </div>
 </header>
 
-<div class="two-col">
-  <section class="card">
-    <div class="card-head">
-      <h2>Upload photo</h2>
-    </div>
-    <label class="dropzone" for="att-file" id="att-dropzone">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      <strong id="att-drop-title">Choose a classroom photo</strong>
-      <small id="att-drop-hint">JPG or PNG · group photos are supported</small>
-      <input id="att-file" type="file" accept="image/jpeg,image/png" hidden>
-    </label>
-    <ul class="file-list hidden" id="att-file-list"></ul>
-    <div class="card-actions">
-      <button class="btn btn-primary" id="btn-attend-upload" type="button" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="4"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg>
-        Process photo
-      </button>
-    </div>
-  </section>
+<!-- Uploader. Collapses to a compact bar once a photo is chosen. ---------- -->
+<section aria-labelledby="upload-heading">
+  <h2 class="sr-only" id="upload-heading">Upload a classroom photo</h2>
 
-  <section class="card" id="result-card">
-    <div class="card-head">
-      <h2>Recognition results</h2>
-      <button class="btn btn-ghost btn-sm hidden" id="btn-new-scan" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        New scan
-      </button>
-    </div>
+  <label class="dropzone" for="att-file" id="att-dropzone">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="16.5 8 12 3.5 7.5 8"/><line x1="12" y1="3.5" x2="12" y2="15"/>
+    </svg>
+    <strong id="att-drop-title">Choose a classroom photo</strong>
+    <small id="att-drop-hint">JPG or PNG &nbsp;/&nbsp; drag and drop is supported</small>
+    <input id="att-file" type="file" accept="image/jpeg,image/png" hidden>
+  </label>
 
-    <div class="empty-state" id="result-empty">
-      <span class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      </span>
-      <strong>No scan yet</strong>
-      <p>Upload a photo to see recognized faces here.</p>
-    </div>
+  <div class="scan-bar hidden" id="att-scan-bar">
+    <ul class="file-list" id="att-file-list"></ul>
+    <button class="btn btn-primary btn-lg" id="btn-attend-upload" type="button" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
+        <circle cx="12" cy="12" r="3.25"/>
+      </svg>
+      Run recognition
+    </button>
+  </div>
+</section>
 
-    <div class="hidden" id="result-content">
-      <div class="result-stats">
-        <div class="result-stat"><strong id="res-faces">0</strong><span>Faces found</span></div>
-        <div class="result-stat good"><strong id="res-recognized">0</strong><span>Recognized</span></div>
-        <div class="result-stat warn"><strong id="res-unknown">0</strong><span>Unknown</span></div>
+<!-- Result. The payoff gets the full width. -------------------------------- -->
+<section class="panel" id="result-card" aria-labelledby="result-heading">
+  <div class="panel-head">
+    <h2 id="result-heading">Recognition result</h2>
+  </div>
+
+  <div class="empty" id="result-empty">
+    <span class="empty-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
+        <circle cx="12" cy="12" r="3.25"/>
+      </svg>
+    </span>
+    <strong>No scan yet</strong>
+    <p>Upload a classroom photo and the detected faces will appear here, boxed and labelled.</p>
+  </div>
+
+  <!-- Multi-stage progress, so a slow model run still reads as progress. -->
+  <div class="scanning hidden" id="result-scanning" aria-live="polite">
+    <ol class="scan-stages" id="scan-stages">
+      <li class="scan-stage" data-stage="1"><span class="bullet" aria-hidden="true"></span>Uploading photo</li>
+      <li class="scan-stage" data-stage="2"><span class="bullet" aria-hidden="true"></span>Detecting faces</li>
+      <li class="scan-stage" data-stage="3"><span class="bullet" aria-hidden="true"></span>Matching against enrolled students</li>
+    </ol>
+  </div>
+
+  <div class="hidden" id="result-content">
+    <figure class="result-figure">
+      <img id="result-img" alt="Classroom photo with a box drawn around each detected face">
+    </figure>
+
+    <div class="tallies">
+      <div class="tally">
+        <strong id="res-faces">0</strong>
+        <span>Faces detected</span>
       </div>
-      <figure class="result-image">
-        <img id="result-img" alt="Processed classroom photo with face boxes">
-      </figure>
-      <div id="recognized-list"></div>
-      <p class="note hidden" id="unknown-note">
-        Unknown faces were saved for review. If a registered student wasn't recognized, try better lighting or a closer shot.
-      </p>
+      <div class="tally tally-present">
+        <strong id="res-recognized">0</strong>
+        <span>Recognised</span>
+      </div>
+      <div class="tally tally-unknown">
+        <strong id="res-unknown">0</strong>
+        <span>Unidentified</span>
+      </div>
     </div>
 
-    <div class="scanning hidden" id="result-scanning">
-      <span class="spinner big"></span>
-      <strong>Processing faces…</strong>
-      <p>This can take a moment on group photos.</p>
-    </div>
-  </section>
-</div>
+    <div id="recognized-list"></div>
 
-<section class="card">
-  <div class="card-head">
-    <h2>Today's attendance log</h2>
-    <span class="chip chip-green" id="log-count">0 present</span>
+    <p class="note hidden" id="unknown-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10.3 3.9 2 18.1A2 2 0 0 0 3.7 21h16.6a2 2 0 0 0 1.7-2.9L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9.5" x2="12" y2="13.5"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span>Unidentified faces were saved for review. If an enrolled student was missed, try stronger lighting or a closer frame.</span>
+    </p>
+  </div>
+</section>
+
+<!-- Log ------------------------------------------------------------------- -->
+<section class="panel" aria-labelledby="log-heading">
+  <div class="panel-head">
+    <h2 id="log-heading">Today's register</h2>
+    <span class="chip chip-present" id="log-count">0 present</span>
   </div>
   <div class="table-wrap">
     <table class="table">
+      <caption class="sr-only">Students marked present today</caption>
       <thead>
-        <tr><th>Student</th><th>ID</th><th>Time</th><th>Status</th></tr>
+        <tr>
+          <th scope="col">Student</th>
+          <th scope="col">ID</th>
+          <th scope="col">Time</th>
+          <th scope="col">Status</th>
+        </tr>
       </thead>
       <tbody id="log-body">
-        <tr><td colspan="4" class="loading-row">Loading…</td></tr>
+        <tr><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td></tr>
+        <tr><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td></tr>
+        <tr><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td><td><span class="skel skel-line"></span></td></tr>
       </tbody>
     </table>
   </div>
