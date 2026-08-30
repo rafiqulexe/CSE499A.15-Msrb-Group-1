@@ -62,7 +62,7 @@ timeline
 
 All final project materials are available in the following Google Drive folder:
 
-🔗 **[Final Submission – Video Presentation, Presentation Slides, Demo Video & Final Report]([YOUR_GOOGLE_DRIVE_LINK_HERE](https://docs.google.com/presentation/d/1MZN2bvVqSlva_E9sGZ7TZaIBPYsc6K2N/edit?usp=drive_link&ouid=105112015491029026132&rtpof=true&sd=true))**
+🔗 **[Final Submission – Video Presentation, Presentation Slides, Demo Video & Final Report](https://docs.google.com/presentation/d/1MZN2bvVqSlva_E9sGZ7TZaIBPYsc6K2N/edit?usp=drive_link&ouid=105112015491029026132&rtpof=true&sd=true)**
 
 The folder contains:
 
